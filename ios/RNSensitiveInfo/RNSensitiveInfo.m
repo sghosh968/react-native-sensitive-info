@@ -108,12 +108,20 @@ NSDictionary * makeError(NSError *error)
 
 
 RCT_EXPORT_METHOD(setItem:(NSString*)key value:(NSString*)value options:(NSDictionary *)options resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject){
-
+    /* 
+        - converts string value in keychainService(passed under options) into NSString
+        - check if keychainService isn't passed set it to default keychainService value i.e. app
+    */
     NSString * keychainService = [RCTConvert NSString:options[@"keychainService"]];
     if (keychainService == NULL) {
         keychainService = @"app";
     }
-
+    /* 
+        - encode passed in value as UTF8 string
+        - refer links below for more details:
+        : dataUsingEncoding     - https://developer.apple.com/documentation/foundation/nsstring/1416696-datausingencoding
+        : NSUTF8StringEncoding  - https://developer.apple.com/documentation/foundation/1497293-anonymous/nsutf8stringencoding?language=objc
+    */
     NSData* valueData = [value dataUsingEncoding:NSUTF8StringEncoding];
     NSMutableDictionary* query = [NSMutableDictionary dictionaryWithObjectsAndKeys:
                                       (__bridge id)(kSecClassGenericPassword), kSecClass,
